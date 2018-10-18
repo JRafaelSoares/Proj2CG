@@ -29,7 +29,7 @@ class Main {
         
         this.axisHelper = new THREE.AxesHelper(40);
 
-        this.axisHelper.visible = true;
+        this.axisHelper.visible = false;
 
         this.scene.add(this.axisHelper);
         
