@@ -4,6 +4,7 @@ class Ball extends GraphicalEntity{
         super();
         
         this.radius = radius;
+        this.camera = camera;
 
         var geometry = new THREE.SphereGeometry(this.radius, this.radius*10, this.radius*10);
         var mesh = new THREE.Mesh(geometry, material);
@@ -11,9 +12,11 @@ class Ball extends GraphicalEntity{
         this.add(mesh);
 
         if(camera != null){
-            this.add(camera);
+            this.add(this.camera);
         }
 
+
+        this.camera.position.set(0, radius*1.2, -radius*1.2);
         this.position.set(x, y, z);
     }
 
