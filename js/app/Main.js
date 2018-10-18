@@ -13,9 +13,9 @@ class Main {
         this.defaultHeight = window.innerHeight;
 
         document.body.appendChild(this.renderer.domElement);
-       
-        this.createScene();
+        
         this.createCamera();
+        this.createScene();
 
         this.clock = new THREE.Clock();
         
@@ -32,6 +32,10 @@ class Main {
         this.axisHelper.visible = true;
 
         this.scene.add(this.axisHelper);
+        
+        this.ballMaterial = new THREE.MeshBasicMaterial({color: 0x00ff00, wireframe: true});
+        this.ball = new Ball(0,0,0,20, this.ballMaterial, this.cameraList[2] );
+        this.scene.add(this.ball);
     }
 
     createCamera() {
@@ -44,10 +48,19 @@ class Main {
         this.cameraList[0] = new THREE.OrthographicCamera(window.innerWidth / -2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / -2, 1, 1000);
         
         this.cameraList[0].position.y = 600;
-        this.cameraList[0].lookAt(this.scene.position);
+        this.cameraList[0].lookAt(0,0,0);
         
         //Camera 2: Perspective Camera, must see all the playing field;
+        
+        this.cameraList[1] = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 1, 1000);
+        
+        this.cameraList[1].position.y = 600;
+        this.cameraList[1].lookAt(0,0,0);
+        
         //Camera 3: Perspective Camera that moves with the ball
+        
+        this.cameraList[2] = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 1, 1000);
+        
     }
 
     render() {
@@ -83,15 +96,23 @@ class Main {
         
         //Does this still apply to Perspective cameras?
         if (window.innerHeight > 0 && window.innerWidth > 0) {
-            for (var i = 0; i < this.cameraList.length; i++){
-                
-                this.cameraList[i].left = window.innerWidth / -2;
-                this.cameraList[i].right = window.innerWidth / 2;
+            
+            //Ortogonal camera 1
+            this.cameraList[0].left = window.innerWidth / -2;
+            this.cameraList[0].right = window.innerWidth / 2;
 
-                this.cameraList[i].top = window.innerHeight / 2;
-                this.cameraList[i].bottom = window.innerHeight / -2;
+            this.cameraList[0].top = window.innerHeight / 2;
+            this.cameraList[0].bottom = window.innerHeight / -2;
 
-                this.cameraList[i].updateProjectionMatrix();
+            
+            
+            //Perspective camera 2
+            
+            this.cameraList[1].aspect = window.innerWidth/window.innerHeight;
+            
+            //Updates all cameras
+            for(var i = 0; i<3; i++){
+                this.cameraList[i].updateProjectionMatrix;
             }
         }
 
