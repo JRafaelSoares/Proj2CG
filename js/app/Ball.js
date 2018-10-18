@@ -8,9 +8,9 @@ class Ball extends GraphicalEntity{
         
         /*Create Ball*/
         var geometry = new THREE.SphereGeometry(this.radius, this.radius * 1, this.radius * 1);
-        var mesh = new THREE.Mesh(geometry, material);
+        this.mesh = new THREE.Mesh(geometry, material);
         
-        this.add(mesh);
+        this.add(this.mesh);
 
         /*Camera of the Ball*/
         if(camera != null){
@@ -22,6 +22,8 @@ class Ball extends GraphicalEntity{
 
         this.position.set(x, y, z);
 
+        this.speed = 0;
+
         /*Axis helper*/
         this.axisHelper = new THREE.AxesHelper(this.radius * 1.5);
         this.axisHelper.visible = true;
@@ -29,16 +31,36 @@ class Ball extends GraphicalEntity{
         this.add(this.axisHelper);
     }
 
+    tryUpdate(t){
+        var linearMove = this.speed * t;
+
+        this.mesh.rotation.x += linearMove / this.radius;
+
+        var positions = [0, 0];
+
+        var positions[0] += linearMove * Math.sin(this.rotation.y); // x
+        var positions[1] += linearMove * Math.cos(this.rotation.y); // z
+
+        return positions;
+    }
+
     update(t){
+
+        var linearMove = this.speed * t;
+
+        this.mesh.rotation.x += linearMove / this.radius;
+
+        this.position.x += linearMove * Math.sin(this.rotation.y);
+        this.position.z += linearMove * Math.cos(this.rotation.y);
 
     }
 
     rotateY(w) {
-        this.rotation.y = w - 0.5 * Math.PI - (0.5 * Math.PI * (0.4 * Math.PI));
+        this.rotation.y = w;
     }
 
-    rotateZ(t) {
-        this.rotation.z += -(Math.abs(this.linVelocity) / this.radius) * t;
+    incrementSpeed(s) {
+        this.speed += s;
     }
 
     toggleAxisHelper(){

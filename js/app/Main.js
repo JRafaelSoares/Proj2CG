@@ -18,6 +18,8 @@ class Main {
         this.createScene();
 
         this.clock = new THREE.Clock();
+
+        this.timer = 0;
         
         this.animate();
     }
@@ -79,6 +81,9 @@ class Main {
 
             this.balls[i] = new Ball(x, this.ballRadius, z, this.ballRadius, this.ballMaterial, (i == 0 ? this.cameraList[2] : null));
             
+            this.balls[i].incrementSpeed(50 * Math.random());
+            this.balls[i].rotateY(Math.random() * 2 * Math.PI);
+
             this.scene.add(this.balls[i]);
         }
 
@@ -202,6 +207,21 @@ class Main {
 
 
     update() {
+        var t = this.clock.getDelta();
+
+        this.timer += t;
+
+        for(var i = 0; i < this.numBalls; i++){
+            this.balls[i].update(t);
+
+            if(this.timer > 10){
+                this.balls[i].incrementSpeed(20);
+            }
+        }
+
+        if(this.timer > 10){
+            this.timer = 0;
+        }
     }
 }
 
