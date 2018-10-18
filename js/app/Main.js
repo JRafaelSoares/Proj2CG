@@ -38,6 +38,9 @@ class Main {
         this.ballRadius = this.diagonal / 20;
 
 
+        this.baseMaterial = new THREE.MeshBasicMaterial({color: 0x009933, wireframe: false});
+        this.wallMaterial = new THREE.MeshBasicMaterial({color: 0x734d26, wireframe: false});
+
         this.field = new Field(0, 0, 0, this.diagonal, [this.baseMaterial, this.wallMaterial]);
 
         
@@ -51,16 +54,12 @@ class Main {
 
             var posValid = true;
 
-            console.log("Teste");
-
             do {
 
                 posValid = true;
 
-                var x = -this.field.getWidth / 2 + this.ballRadius + Math.random() * (this.field.getWidth / 2 - this.ballRadius);
-                var z = -this.field.getHeight / 2 + this.ballRadius + Math.random() * (this.field.getHeight / 2 - this.ballRadius);
-
-
+                var x = -this.field.getWidth / 2 + this.ballRadius + Math.random() * (this.field.getWidth - 2 * this.ballRadius);
+                var z = -this.field.getHeight / 2 + this.ballRadius + Math.random() * (this.field.getHeight - 2 * this.ballRadius);
 
                 for(var j = 0; j < i; j++){
 
@@ -68,8 +67,10 @@ class Main {
 
                     posValid = (distance >= radiusSumSquared);
 
-                    if(!posValid)
+                    if(!posValid){
+                        console.log("Conflict");
                         break;
+                    }
                 }
 
             } while(!posValid);
@@ -78,10 +79,6 @@ class Main {
             
             this.scene.add(this.balls[i]);
         }
-
-
-        this.baseMaterial = new THREE.MeshBasicMaterial({color: 0x009933, wireframe: false});
-        this.wallMaterial = new THREE.MeshBasicMaterial({color: 0x734d26, wireframe: false});
 
         this.scene.add(this.field);
     }
