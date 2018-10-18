@@ -27,15 +27,63 @@ class Main {
         
         this.scene = new THREE.Scene();
         
+
         this.axisHelper = new THREE.AxesHelper(40);
-
         this.axisHelper.visible = false;
-
         this.scene.add(this.axisHelper);
+
+
+        this.diagonal = 500;
+
+        this.ballRadius = this.diagonal / 20;
+
+
+        this.field = new Field(0, 0, 0, this.diagonal, [this.baseMaterial, this.wallMaterial]);
+
         
-        this.ballMaterial = new THREE.MeshBasicMaterial({color: 0x00ff00, wireframe: true});
-        this.ball = new Ball(0,0,0,20, this.ballMaterial, this.cameraList[2] );
-        this.scene.add(this.ball);
+        this.ballMaterial = new THREE.MeshBasicMaterial({color: 0xcc3300, wireframe: true});
+
+        this.balls = Array(10);
+
+        var radiusSumSquared = (this.ballRadius * 2) * (this.ballRadius * 2);
+
+        for(var i = 0; i < 10; i++){
+
+            var posValid = true;
+
+            console.log("Teste");
+
+            do {
+
+                posValid = true;
+
+                var x = -this.field.getWidth / 2 + this.ballRadius + Math.random() * (this.field.getWidth / 2 - this.ballRadius);
+                var z = -this.field.getHeight / 2 + this.ballRadius + Math.random() * (this.field.getHeight / 2 - this.ballRadius);
+
+
+
+                for(var j = 0; j < i; j++){
+
+                    var distance = (x - this.balls[j].position.x) * (x - this.balls[j].position.x) + (z - this.balls[j].position.z) * (z - this.balls[j].position.z)
+
+                    posValid = (distance >= radiusSumSquared);
+
+                    if(!posValid)
+                        break;
+                }
+
+            } while(!posValid);
+
+            this.balls[i] = new Ball(x, this.ballRadius, z, this.ballRadius, this.ballMaterial, (i == 0 ? this.cameraList[2] : null));
+            
+            this.scene.add(this.balls[i]);
+        }
+
+
+        this.baseMaterial = new THREE.MeshBasicMaterial({color: 0x009933, wireframe: false});
+        this.wallMaterial = new THREE.MeshBasicMaterial({color: 0x734d26, wireframe: false});
+
+        this.scene.add(this.field);
     }
 
     createCamera() {
