@@ -7,7 +7,7 @@ class Ball extends GraphicalEntity{
         this.camera = camera;
         
         /*Create Ball*/
-        var geometry = new THREE.SphereGeometry(this.radius, this.radius*10, this.radius*10);
+        var geometry = new THREE.SphereGeometry(this.radius, this.radius * 1, this.radius * 1);
         var mesh = new THREE.Mesh(geometry, material);
         
         this.add(mesh);
@@ -16,7 +16,7 @@ class Ball extends GraphicalEntity{
         if(camera != null){
             this.add(this.camera);
 
-            this.camera.position.set(0, this.radius * 0.85, this.radius * 8);
+            this.camera.position.set(0, this.radius * 2, this.radius * -4);
             this.camera.lookAt(0, 0, 0);
         }
 
@@ -42,6 +42,6 @@ class Ball extends GraphicalEntity{
     }
 
     toggleAxisHelper(){
-        this.axisHelper = !this.axisHelper;
+        this.axisHelper.visible = !this.axisHelper.visible;
     }
 }

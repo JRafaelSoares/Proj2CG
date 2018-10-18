@@ -33,6 +33,9 @@ class Main {
         this.scene.add(this.axisHelper);
 
 
+        this.numBalls = 10;
+
+
         this.diagonal = 500;
 
         this.ballRadius = this.diagonal / 20;
@@ -44,13 +47,13 @@ class Main {
         this.field = new Field(0, 0, 0, this.diagonal, [this.baseMaterial, this.wallMaterial]);
 
         
-        this.ballMaterial = new THREE.MeshBasicMaterial({color: 0xcc3300, wireframe: true});
+        this.ballMaterial = new THREE.MeshBasicMaterial({color: 0xcc3300, wireframe: false});
 
-        this.balls = Array(10);
+        this.balls = Array(this.numBalls);
 
         var radiusSumSquared = (this.ballRadius * 2) * (this.ballRadius * 2);
 
-        for(var i = 0; i < 10; i++){
+        for(var i = 0; i < this.numBalls; i++){
 
             var posValid = true;
 
@@ -68,7 +71,6 @@ class Main {
                     posValid = (distance >= radiusSumSquared);
 
                     if(!posValid){
-                        console.log("Conflict");
                         break;
                     }
                 }
@@ -93,18 +95,18 @@ class Main {
         this.cameraList[0] = new THREE.OrthographicCamera(window.innerWidth / -2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / -2, 1, 1000);
         
         this.cameraList[0].position.y = 600;
-        this.cameraList[0].lookAt(0,0,0);
+        this.cameraList[0].lookAt(0, 0, 0);
         
         //Camera 2: Perspective Camera, must see all the playing field;
         
-        this.cameraList[1] = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 1, 1000);
+        this.cameraList[1] = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
         
         this.cameraList[1].position.y = 600;
-        this.cameraList[1].lookAt(0,0,0);
+        this.cameraList[1].lookAt(0, 0, 0);
         
         //Camera 3: Perspective Camera that moves with the ball
         
-        this.cameraList[2] = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 1, 1000);
+        this.cameraList[2] = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
         
     }
 
@@ -152,8 +154,10 @@ class Main {
             
             
             //Perspective camera 2
-            
-            this.cameraList[1].aspect = window.innerWidth/window.innerHeight;
+            this.cameraList[1].aspect = window.innerWidth / window.innerHeight;
+
+            //Perspective camera 3
+            this.cameraList[2].aspect = window.innerWidth / window.innerHeight;
             
             //Updates all cameras
             for(var i = 0; i<3; i++){
@@ -178,12 +182,21 @@ class Main {
                 break;
             case 69: //e
                 //Show/Hide balls axis
+                this.toggleAxisHelpers();
+                break;
             /*
             Not needed anymore, but can be added
             case 97: //a
                 this.toggleWireframe();
                 break;
             */
+        }
+    }
+
+
+    toggleAxisHelpers(){
+        for(var i = 0; i < this.numBalls; i++) {
+            this.balls[i].toggleAxisHelper();
         }
     }
 
