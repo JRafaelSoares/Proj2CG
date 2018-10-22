@@ -74,4 +74,7 @@ class Ball extends GraphicalEntity{
     	return this.rotation.y;
     }
     
+    addRotationY(w) {
+        this.rotation.y += w;
+    }
 }

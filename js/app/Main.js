@@ -36,7 +36,7 @@ class Main {
         this.axisHelper.visible = false;
         this.scene.add(this.axisHelper);
 
-        this.numBalls = 10;
+        this.numBalls = 1;
 
         this.diagonal = 500;
 
@@ -231,15 +231,23 @@ class Main {
                 
                 if(positions[i][0]+this.ballRadius >= field_width/2 || positions[i][0]-this.ballRadius <= -field_width/2){
                     num_colisions++;
+                    
+                    console.log("Rotation: " + rotation);
+                    this.balls[i].rotateY(2*Math.PI - rotation);
+                    //this.balls[i].rotateY(rotation - 2*(0.5*Math.PI - (2 * Math.PI - rotation)));
                     //console.log(rotation - 2*(0.5*Math.PI - (2 * Math.PI - rotation)));
-                    this.balls[i].rotateY(rotation + 2*(0.5*Math.PI - (2 * Math.PI - rotation)));
+                    //this.balls[i].addRotationY(-2*(0.5*Math.PI - (2 * Math.PI - rotation)) + 2*Math.PI);
                 }
                 
                 
                 else if(positions[i][1]+this.ballRadius >= field_height/2 || positions[i][1]-this.ballRadius <= -field_height/2){
                     num_colisions++;
                     
-                    this.balls[i].rotateY(rotation + 2*(rotation - Math.PI));
+                    console.log("Rotation: " + rotation);
+
+                    this.balls[i].rotateY(0.5 * Math.PI + rotation);
+                    //this.balls[i].rotateY(rotation + 2*(rotation - Math.PI) + 2*Math.PI)
+                    //this.balls[i].addRotationY(2*(rotation - Math.PI) + 2*Math.PI);
                 }
                 /*
                 else{
