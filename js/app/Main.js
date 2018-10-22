@@ -228,20 +228,20 @@ class Main {
             
             for(var i = 0; i < this.numBalls; i++){
                 var rotation = this.balls[i].getRotationY;
-                /*
+                
                 if(positions[i][0]+this.ballRadius >= field_width/2 || positions[i][0]-this.ballRadius <= -field_width/2){
                     num_colisions++;
-                    
-                    this.balls[i].rotateY(rotation - 2*(0.5*1 - (2 * 1 - rotation)));
+                    //console.log(rotation - 2*(0.5*Math.PI - (2 * Math.PI - rotation)));
+                    this.balls[i].rotateY(rotation + 2*(0.5*Math.PI - (2 * Math.PI - rotation)));
                 }
                 
                 
                 else if(positions[i][1]+this.ballRadius >= field_height/2 || positions[i][1]-this.ballRadius <= -field_height/2){
-                    //num_colisions++;
+                    num_colisions++;
                     
-                    //this.balls[i].rotateY(rotation - 2*(rotation - Math.PI));
+                    this.balls[i].rotateY(rotation + 2*(rotation - Math.PI));
                 }
-                
+                /*
                 else{
                     for(var j = 0; j < this.numBalls; j++){
                         for(var k = j+1; k < this.numBalls-j; k++){
