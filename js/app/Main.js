@@ -14,6 +14,7 @@ class Main {
 
         document.body.appendChild(this.renderer.domElement);
         
+
         this.createCamera();
         this.createScene();
 
@@ -22,6 +23,7 @@ class Main {
         this.timer = 0;
         
         this.animate();
+
     }
 
     createScene() {
@@ -34,9 +36,7 @@ class Main {
         this.axisHelper.visible = false;
         this.scene.add(this.axisHelper);
 
-
         this.numBalls = 10;
-
 
         this.diagonal = 500;
 
@@ -46,8 +46,7 @@ class Main {
         this.baseMaterial = new THREE.MeshBasicMaterial({color: 0x009933, wireframe: false});
         this.wallMaterial = new THREE.MeshBasicMaterial({color: 0x734d26, wireframe: false});
 
-        this.field = new Field(0, 0, 0, this.diagonal, [this.baseMaterial, this.wallMaterial]);
-
+        this.field = new Field(0, 0, 0, this.diagonal, [this.baseMaterial, this.wallMaterial], this.cameraList[1]);
         
         this.ballMaterial = new THREE.MeshBasicMaterial({color: 0xcc3300, wireframe: false});
 
@@ -78,12 +77,13 @@ class Main {
                 }
 
             } while(!posValid);
-
+            
+           
             this.balls[i] = new Ball(x, this.ballRadius, z, this.ballRadius, this.ballMaterial, (i == 0 ? this.cameraList[2] : null));
             
             this.balls[i].incrementSpeed(50 * Math.random());
             this.balls[i].rotateY(Math.random() * 2 * Math.PI);
-
+            
             this.scene.add(this.balls[i]);
         }
 
@@ -105,9 +105,6 @@ class Main {
         //Camera 2: Perspective Camera, must see all the playing field;
         
         this.cameraList[1] = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
-        
-        this.cameraList[1].position.y = 600;
-        this.cameraList[1].lookAt(0, 0, 0);
         
         //Camera 3: Perspective Camera that moves with the ball
         
@@ -139,12 +136,15 @@ class Main {
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         
         //Does this still work with moveable camera?
+        
         if(window.innerWidth < window.innerHeight){
             this.scene.scale.set(window.innerWidth / this.defaultWidth, window.innerWidth / this.defaultWidth, window.innerWidth / this.defaultWidth);
         }
         else {
             this.scene.scale.set(window.innerHeight / this.defaultHeight, window.innerHeight / this.defaultHeight, window.innerHeight / this.defaultHeight);
         }
+        
+      
         
         //Does this still apply to Perspective cameras?
         if (window.innerHeight > 0 && window.innerWidth > 0) {
@@ -210,18 +210,72 @@ class Main {
         var t = this.clock.getDelta();
 
         this.timer += t;
-
+        
+        /* Ball Speed */
+        var positions = new Array(this.numBalls);
+        
+        
+        
+        var field_height = this.field.getHeight;
+        var field_width = this.field.getWidth;
+        
         for(var i = 0; i < this.numBalls; i++){
-            this.balls[i].update(t);
-
+            positions[i] = this.balls[i].tryUpdate(t); 
+        }
+        
+        do{
+            var num_colisions = 0;
+            
+            for(var i = 0; i < this.numBalls; i++){
+                var rotation = this.balls[i].getRotationY;
+                /*
+                if(positions[i][0]+this.ballRadius >= field_width/2 || positions[i][0]-this.ballRadius <= -field_width/2){
+                    num_colisions++;
+                    
+                    this.balls[i].rotateY(rotation - 2*(0.5*1 - (2 * 1 - rotation)));
+                }
+                
+                
+                else if(positions[i][1]+this.ballRadius >= field_height/2 || positions[i][1]-this.ballRadius <= -field_height/2){
+                    //num_colisions++;
+                    
+                    //this.balls[i].rotateY(rotation - 2*(rotation - Math.PI));
+                }
+                
+                else{
+                    for(var j = 0; j < this.numBalls; j++){
+                        for(var k = j+1; k < this.numBalls-j; k++){
+                            var distance = (positions[j][0] - positions[k][0])*(positions[j][0] - positions[k][0]) + (positions[j][1] - positions[k][1])*(positions[j][1] - positions[k][1])
+                            
+                            
+                            if (distance < 4*this.ballRadius*this.ballRadius){
+                                var velocity = 
+                            }
+                            
+                        }
+                    }
+                }
+                */
+                
+                positions[i] = this.balls[i].tryUpdate(t);
+            }
+            
+        }while(num_colisions>0);
+        
+        for(var i = 0; i < this.numBalls; i++){
+            this.balls[i].update(t); 
+            /*
             if(this.timer > 10){
                 this.balls[i].incrementSpeed(20);
             }
+            */
         }
-
+        
         if(this.timer > 10){
             this.timer = 0;
         }
+        
+        
     }
 }
 

@@ -1,6 +1,6 @@
 class Field extends GraphicalEntity {
 
-	constructor(x, y, z, diagonal, materials){
+	constructor(x, y, z, diagonal, materials, camera = null){
         super();
 
         this.baseMaterial = materials[0];
@@ -17,6 +17,14 @@ class Field extends GraphicalEntity {
 
         this.baseHeight = 2 * diagonal / Math.sqrt(5);
         this.baseWidth = this.baseHeight / 2;
+        
+        if(camera != null){
+            this.camera = camera;
+            this.add(this.camera);
+
+            this.camera.position.set(-this.baseWidth, 200, -this.baseHeight);
+            this.camera.lookAt(0, 0, 0);
+        }
 
         var geometry = new THREE.CubeGeometry(this.baseWidth, 10, this.baseHeight);
         this.walls[0] = new THREE.Mesh(geometry, this.baseMaterial);

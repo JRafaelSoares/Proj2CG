@@ -32,16 +32,19 @@ class Ball extends GraphicalEntity{
     }
 
     tryUpdate(t){
+        
         var linearMove = this.speed * t;
 
         this.mesh.rotation.x += linearMove / this.radius;
 
-        var positions = [0, 0];
-
-        var positions[0] += linearMove * Math.sin(this.rotation.y); // x
-        var positions[1] += linearMove * Math.cos(this.rotation.y); // z
+        var positions = [this.position.x, this.position.z];
+        
+        positions[0] += linearMove * Math.sin(this.rotation.y); // x
+        //console.log(positions[0]);
+        positions[1] += linearMove * Math.cos(this.rotation.y); // z
 
         return positions;
+        
     }
 
     update(t){
@@ -66,4 +69,9 @@ class Ball extends GraphicalEntity{
     toggleAxisHelper(){
         this.axisHelper.visible = !this.axisHelper.visible;
     }
+    
+    get getRotationY(){
+    	return this.rotation.y;
+    }
+    
 }
