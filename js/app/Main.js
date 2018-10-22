@@ -36,7 +36,7 @@ class Main {
         this.axisHelper.visible = false;
         this.scene.add(this.axisHelper);
 
-        this.numBalls = 1;
+        this.numBalls = 10;
 
         this.diagonal = 500;
 
@@ -245,7 +245,7 @@ class Main {
                     
                     console.log("Rotation: " + rotation);
 
-                    this.balls[i].rotateY(0.5 * Math.PI + rotation);
+                    this.balls[i].rotateY(Math.PI - rotation);
                     //this.balls[i].rotateY(rotation + 2*(rotation - Math.PI) + 2*Math.PI)
                     //this.balls[i].addRotationY(2*(rotation - Math.PI) + 2*Math.PI);
                 }
@@ -272,11 +272,11 @@ class Main {
         
         for(var i = 0; i < this.numBalls; i++){
             this.balls[i].update(t); 
-            /*
+            
             if(this.timer > 10){
                 this.balls[i].incrementSpeed(20);
             }
-            */
+            
         }
         
         if(this.timer > 10){
