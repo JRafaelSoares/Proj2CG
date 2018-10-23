@@ -48,7 +48,7 @@ class Main {
 
         this.field = new Field(0, 0, 0, this.diagonal, [this.baseMaterial, this.wallMaterial], this.cameraList[1]);
         
-        this.ballMaterial = new THREE.MeshBasicMaterial({color: 0xcc3300, wireframe: false});
+        this.ballMaterial = new THREE.MeshBasicMaterial({color: 0xcc3300, wireframe: true});
 
         this.balls = Array(this.numBalls);
 
@@ -81,7 +81,7 @@ class Main {
            
             this.balls[i] = new Ball(x, this.ballRadius, z, this.ballRadius, this.ballMaterial, (i == 0 ? this.cameraList[2] : null));
             
-            this.balls[i].incrementSpeed(50 * Math.random());
+            this.balls[i].incrementSpeed(150 * Math.random());
             this.balls[i].rotateY(Math.random() * 2 * Math.PI);
             
             this.scene.add(this.balls[i]);
@@ -135,38 +135,46 @@ class Main {
 
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         
-        //Does this still work with moveable camera?
-        
+        this.window_ratio = window.innerWidth / window.innerHeight;
+        /*
         if(window.innerWidth < window.innerHeight){
             this.scene.scale.set(window.innerWidth / this.defaultWidth, window.innerWidth / this.defaultWidth, window.innerWidth / this.defaultWidth);
         }
         else {
             this.scene.scale.set(window.innerHeight / this.defaultHeight, window.innerHeight / this.defaultHeight, window.innerHeight / this.defaultHeight);
         }
+        */
         
-      
         
-        //Does this still apply to Perspective cameras?
         if (window.innerHeight > 0 && window.innerWidth > 0) {
-            
-            //Ortogonal camera 1
-            this.cameraList[0].left = window.innerWidth / -2;
-            this.cameraList[0].right = window.innerWidth / 2;
+            if(window.innerWidth / window.innerHeight > this.defaultWidth / this.defaultHeight){
+                //this.scene.scale.set(window.innerWidth / this.defaultWidth, window.innerWidth / this.defaultWidth, window.innerWidth / this.defaultWidth);
+                //Ortogonal camera 1
+                this.cameraList[0].left = (window.innerWidth / -2) * (this.defaultHeight / this.defaultWidth);
+                this.cameraList[0].right = (window.innerWidth / 2) * (this.defaultHeight / this.defaultWidth);
 
-            this.cameraList[0].top = window.innerHeight / 2;
-            this.cameraList[0].bottom = window.innerHeight / -2;
+                this.cameraList[0].top = window.innerHeight / 2;
+                this.cameraList[0].bottom = window.innerHeight / -2;
+            }
+            else {
+                //this.scene.scale.set(window.innerHeight / this.defaultHeight, window.innerHeight / this.defaultHeight, window.innerHeight / this.defaultHeight);
+                //Ortogonal camera 1
+                this.cameraList[0].left = window.innerWidth / -2;
+                this.cameraList[0].right = window.innerWidth / 2;
 
-            
-            
+                this.cameraList[0].top = (window.innerHeight / 2) * (this.defaultWidth / this.defaultHeight);
+                this.cameraList[0].bottom = (window.innerHeight / -2) * (this.defaultWidth / this.defaultHeight);
+            }
+
             //Perspective camera 2
-            this.cameraList[1].aspect = window.innerWidth / window.innerHeight;
+            this.cameraList[1].aspect = this.window_ratio;
 
             //Perspective camera 3
-            this.cameraList[2].aspect = window.innerWidth / window.innerHeight;
+            this.cameraList[2].aspect = this.window_ratio;
             
             //Updates all cameras
             for(var i = 0; i<3; i++){
-                this.cameraList[i].updateProjectionMatrix;
+                this.cameraList[i].updateProjectionMatrix();
             }
         }
 
@@ -228,11 +236,10 @@ class Main {
             
             for(var i = 0; i < this.numBalls; i++){
                 var rotation = this.balls[i].getRotationY;
-                
+
                 if(positions[i][0]+this.ballRadius >= field_width/2 || positions[i][0]-this.ballRadius <= -field_width/2){
                     num_colisions++;
                     
-                    console.log("Rotation: " + rotation);
                     this.balls[i].rotateY(2*Math.PI - rotation);
                     //this.balls[i].rotateY(rotation - 2*(0.5*Math.PI - (2 * Math.PI - rotation)));
                     //console.log(rotation - 2*(0.5*Math.PI - (2 * Math.PI - rotation)));
@@ -240,30 +247,53 @@ class Main {
                 }
                 
                 
-                else if(positions[i][1]+this.ballRadius >= field_height/2 || positions[i][1]-this.ballRadius <= -field_height/2){
+                else if(positions[i][1] + this.ballRadius >= field_height / 2 || positions[i][1] - this.ballRadius <= -field_height / 2){
                     num_colisions++;
                     
-                    console.log("Rotation: " + rotation);
-
                     this.balls[i].rotateY(Math.PI - rotation);
                     //this.balls[i].rotateY(rotation + 2*(rotation - Math.PI) + 2*Math.PI)
                     //this.balls[i].addRotationY(2*(rotation - Math.PI) + 2*Math.PI);
                 }
-                /*
+                
                 else{
-                    for(var j = 0; j < this.numBalls; j++){
-                        for(var k = j+1; k < this.numBalls-j; k++){
-                            var distance = (positions[j][0] - positions[k][0])*(positions[j][0] - positions[k][0]) + (positions[j][1] - positions[k][1])*(positions[j][1] - positions[k][1])
+                    var speed = this.balls[i].getSpeed;
+                    var speedX = speed * Math.sin(rotation);
+                    var speedZ = speed * Math.cos(rotation);
+
+                    for(var k = i+1; k < this.numBalls; k++){
+                        var distance = (positions[i][0] - positions[k][0]) * (positions[i][0] - positions[k][0]) + (positions[i][1] - positions[k][1]) * (positions[i][1] - positions[k][1])
+                        
+                        if (distance < 4 * this.ballRadius * this.ballRadius){
+                            num_colisions++;
+                            console.log('ola');
+
+                            var ball2Rotation = this.balls[k].getRotationY;
+                            var ball2Speed = this.balls[k].getSpeed;
+                            var ball2SpeedX = ball2Speed * Math.sin(ball2Rotation);
+                            var ball2SpeedZ = ball2Speed * Math.cos(ball2Rotation);
                             
+                            var aux = ((speedX - ball2SpeedX) * (positions[i][0] - positions[k][0]) + (speedZ - ball2SpeedZ) * (positions[i][1] - positions[k][1])) / (4 * this.ballRadius * this.ballRadius);
+
+                            speedX -= aux * (positions[i][0] - positions[k][0]);
+                            speedZ -= aux * (positions[i][1] - positions[k][1]);
+
+                            ball2SpeedX -= aux * (positions[k][0] - positions[i][0]);
+                            ball2SpeedZ -= aux * (positions[k][1] - positions[i][1]);
+
+                            this.balls[i].setSpeed(Math.sqrt(speedX * speedX + speedZ * speedZ));
+                            this.balls[k].setSpeed(Math.sqrt(ball2SpeedX * ball2SpeedX + ball2SpeedZ * ball2SpeedZ));
                             
-                            if (distance < 4*this.ballRadius*this.ballRadius){
-                                var velocity = 
-                            }
-                            
+                            var new_rotation = ball2Rotation;//Math.atan(speedX / speedZ) + Math.PI * (Math.cos(Math.atan(speedX / speedZ)) < 0 ? 1 : 0);
+                            var new_ball2Rotation = rotation;//Math.atan(ball2SpeedX / ball2SpeedZ) + Math.PI * (Math.cos(Math.atan(ball2SpeedX / ball2SpeedZ)) < 0 ? 1 : 0);
+                            this.balls[i].rotateY(new_rotation);
+                            this.balls[k].rotateY(new_ball2Rotation);
+
+                            positions[k] = this.balls[k].tryUpdate(t);
+                            break;
                         }
                     }
                 }
-                */
+                
                 
                 positions[i] = this.balls[i].tryUpdate(t);
             }
@@ -271,7 +301,7 @@ class Main {
         }while(num_colisions>0);
         
         for(var i = 0; i < this.numBalls; i++){
-            this.balls[i].update(t); 
+            this.balls[i].update(t);
             
             if(this.timer > 10){
                 this.balls[i].incrementSpeed(20);

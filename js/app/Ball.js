@@ -64,17 +64,27 @@ class Ball extends GraphicalEntity{
 
     incrementSpeed(s) {
         this.speed += s;
+        if(this.speed < 0.5){
+            this.speed = 0;
+        }
     }
 
-    toggleAxisHelper(){
+    toggleAxisHelper() {
         this.axisHelper.visible = !this.axisHelper.visible;
     }
     
-    get getRotationY(){
+    get getRotationY() {
     	return this.rotation.y;
     }
+
+    get getSpeed() {
+        return this.speed;
+    }
     
-    addRotationY(w) {
-        this.rotation.y += w;
+    setSpeed(s) {
+        this.speed = s;
+        if(this.speed < 0.5){
+            this.speed = 0;
+        }
     }
 }
