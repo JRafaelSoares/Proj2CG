@@ -9,8 +9,12 @@ class Main {
 
         this.renderer.setSize(window.innerWidth, window.innerHeight);
 
-        this.defaultWidth = 200;
-        this.defaultHeight = 100;
+
+        this.defaultWidth = 600;
+        this.defaultHeight = 1200;
+
+        this.defaultAspectRatio = this.defaultWidth / this.defaultHeight;
+
 
         document.body.appendChild(this.renderer.domElement);
         
@@ -38,7 +42,7 @@ class Main {
 
         this.numBalls = 10;
 
-        this.diagonal = 80;
+        this.diagonal = 1000;
 
         this.ballRadius = this.diagonal / 20;
 
@@ -96,26 +100,27 @@ class Main {
         this.cameraList = new Array(3);
         this.cameraNum = 0;
 
-        this.defaultAspectRatio = 0.5;
         this.windowRatio = window.innerWidth / window.innerHeight;
 
+        this.far = 2000;
+
         /*  Scene Size: 200 * 100 * 200  */
-        
+
         //Camera 1: Ortogonal Top View
-        this.cameraList[0] = new THREE.OrthographicCamera(-this.defaultWidth / 2, -this.defaultWidth / 2, this.defaultHeight / 2, -this.defaultHeight / 2, 0.1, 600);
+        this.cameraList[0] = new THREE.OrthographicCamera(-this.defaultWidth / 2, this.defaultWidth / 2, this.defaultHeight / 2, -this.defaultHeight / 2, 0.1, 1000);
+        
         
 
-        this.cameraList[0].position.y = 200;
+        this.cameraList[0].position.y = 800;
         this.cameraList[0].lookAt(0, 0, 0);
         
 
         //Camera 2: Perspective Camera, must see all the playing field;
-        this.cameraList[1] = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
-        
+        this.cameraList[1] = new THREE.PerspectiveCamera(90, this.windowRatio, 0.1, this.far); //2 * Math.atan2(this.defaultHeight, 2 * this.far) * (180 / Math.PI)
+
 
         //Camera 3: Perspective Camera that moves with the ball
-        this.cameraList[2] = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
-
+        this.cameraList[2] = new THREE.PerspectiveCamera(90, this.windowRatio, 0.1, this.far);
 
         this.resizeEvent();
         
@@ -145,41 +150,41 @@ class Main {
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         
         this.windowRatio = window.innerWidth / window.innerHeight;
-
-        console.log("Ola");
         
         if (window.innerHeight > 0 && window.innerWidth > 0) {
 
             
-            if(this.defaultAspectRatio < this.windowRatio){
-                //this.scene.scale.set(window.innerWidth / this.defaultWidth, window.innerWidth / this.defaultWidth, window.innerWidth / this.defaultWidth);
-
-                /*//Perspective camera 2
-                this.cameraList[1].aspect = window_ratio;
-
-                //Perspective camera 3
-                this.cameraList[2].aspect = window_ratio;*/
+            if(this.defaultAspectRatio >= this.windowRatio){
 
                 //Ortogonal camera 1
-
                 this.cameraList[0].top = (this.defaultWidth * (1 / this.windowRatio)) / 2;
                 this.cameraList[0].bottom = -(this.defaultWidth * (1 / this.windowRatio)) / 2;
 
-            }
-            else {
-                //this.scene.scale.set(window.innerHeight / this.defaultHeight, window.innerHeight / this.defaultHeight, window.innerHeight / this.defaultHeight);
-            
-                /*//Perspective camera 2
-                this.cameraList[1].aspect = window_ratio;
+
+                /*var oldHeight1 = Math.tan((this.cameraList[1].fov / 2) * (Math.PI / 180)) * 2 * this.far;
+                var oldHeight2 = Math.tan((this.cameraList[2].fov / 2) * (Math.PI / 180)) * 2 * this.far;
+
+
+                //Perspective camera 2
+                this.cameraList[1].fov = 2 * Math.atan2(oldHeight1 * this.windowRatio, 2 * this.far * this.cameraList[1].aspect) * (180 / Math.PI);
 
                 //Perspective camera 3
-                this.cameraList[2].aspect = window_ratio;*/
+                this.cameraList[2].fov = 2 * Math.atan2(oldHeight2 * this.windowRatio, 2 * this.far * this.cameraList[2].aspect) * (180 / Math.PI);*/
+
+            }
+            else {
 
                 //Ortogonal camera 1
                 this.cameraList[0].left = -(this.defaultHeight * this.windowRatio) / 2; //* (this.defaultWidth / this.defaultHeight);
                 this.cameraList[0].right = (this.defaultHeight * this.windowRatio) / 2; //* (this.defaultWidth / this.defaultHeight);
 
             }
+
+            //Perspective camera 2
+            this.cameraList[1].aspect = this.windowRatio;
+
+            //Perspective camera 3
+            this.cameraList[2].aspect = this.windowRatio;
             
 
             //Updates all cameras
@@ -224,15 +229,14 @@ class Main {
     }
 
 
-    update() {
+    update(){
+        
         var t = this.clock.getDelta();
 
         this.timer += t;
         
-        /* Ball Speed */
+        //Ball Speed
         var positions = new Array(this.numBalls);
-        
-        
         
         var field_height = this.field.getHeight;
         var field_width = this.field.getWidth;
@@ -322,8 +326,6 @@ class Main {
         if(this.timer > 10){
             this.timer = 0;
         }
-        
-        
     }
-}
 
+}

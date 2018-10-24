@@ -7,7 +7,7 @@ class Ball extends GraphicalEntity{
         this.camera = camera;
         
         /*Create Ball*/
-        var geometry = new THREE.SphereGeometry(this.radius, this.radius * 1, this.radius * 1);
+        var geometry = new THREE.SphereGeometry(this.radius, this.radius * 0.5, this.radius * 0.5);
         this.mesh = new THREE.Mesh(geometry, material);
         
         this.add(this.mesh);

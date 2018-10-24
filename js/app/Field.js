@@ -22,7 +22,7 @@ class Field extends GraphicalEntity {
             this.camera = camera;
             this.add(this.camera);
 
-            this.camera.position.set(-this.baseWidth, 200, -this.baseHeight);
+            this.camera.position.set(-this.baseWidth / 1.2, diagonal / 10 * 4, -this.baseHeight / 1.2);
             this.camera.lookAt(0, 0, 0);
         }
 
