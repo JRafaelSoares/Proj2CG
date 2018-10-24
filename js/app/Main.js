@@ -142,14 +142,28 @@ class Main {
             
             if(window.innerWidth < window.innerHeight){
                 this.scene.scale.set(window.innerWidth / this.defaultWidth, window.innerWidth / this.defaultWidth, window.innerWidth / this.defaultWidth);
+
+                //Perspective camera 2
+                this.cameraList[1].aspect = window_ratio;
+
+                //Perspective camera 3
+                this.cameraList[2].aspect = window_ratio;
+
             }
             else {
                 this.scene.scale.set(window.innerHeight / this.defaultHeight, window.innerHeight / this.defaultHeight, window.innerHeight / this.defaultHeight);
+            
+                //Perspective camera 2
+                this.cameraList[1].aspect = window_ratio;
+
+                //Perspective camera 3
+                this.cameraList[2].aspect = window_ratio;
+
             }
             
 
             if(window.innerWidth > this.defaultWidth){
-                this.scene.scale.set(window.innerWidth / this.defaultWidth, window.innerWidth / this.defaultWidth, window.innerWidth / this.defaultWidth);
+                //this.scene.scale.set(window.innerWidth / this.defaultWidth, window.innerWidth / this.defaultWidth, window.innerWidth / this.defaultWidth);
 
                 //Ortogonal camera 1
                 this.cameraList[0].left = (window.innerWidth / -2); //* (this.defaultWidth / this.defaultHeight);
@@ -159,7 +173,7 @@ class Main {
                 this.cameraList[0].bottom = window.innerHeight / -2;
             }
             else {
-                this.scene.scale.set(window.innerHeight / this.defaultHeight, window.innerHeight / this.defaultHeight, window.innerHeight / this.defaultHeight);
+                //this.scene.scale.set(window.innerHeight / this.defaultHeight, window.innerHeight / this.defaultHeight, window.innerHeight / this.defaultHeight);
                 //Ortogonal camera 1
                 this.cameraList[0].left = window.innerWidth / -2;
                 this.cameraList[0].right = window.innerWidth / 2;
@@ -167,14 +181,6 @@ class Main {
                 this.cameraList[0].top = (window.innerHeight / 2); //* (this.defaultHeight / this.defaultWidth);
                 this.cameraList[0].bottom = (window.innerHeight / -2); //* (this.defaultHeight / this.defaultWidth);
             }
-            
-
-            //Perspective camera 2
-            this.cameraList[1].aspect = window_ratio;
-
-            //Perspective camera 3
-            this.cameraList[2].aspect = window_ratio;
-
 
             //Updates all cameras
             for(var i = 0; i<3; i++){
@@ -241,10 +247,10 @@ class Main {
             for(var i = 0; i < this.numBalls; i++){
                 var rotation = this.balls[i].getRotationY;
 
-                if(positions[i][0]+this.ballRadius >= field_width/2 || positions[i][0]-this.ballRadius <= -field_width/2){
+                if(positions[i][0] + this.ballRadius >= field_width / 2 || positions[i][0] - this.ballRadius <= -field_width / 2){
                     num_colisions++;
                     
-                    this.balls[i].rotateY(2*Math.PI - rotation);
+                    this.balls[i].rotateY(2 * Math.PI - rotation);
                     //this.balls[i].rotateY(rotation - 2*(0.5*Math.PI - (2 * Math.PI - rotation)));
                     //console.log(rotation - 2*(0.5*Math.PI - (2 * Math.PI - rotation)));
                     //this.balls[i].addRotationY(-2*(0.5*Math.PI - (2 * Math.PI - rotation)) + 2*Math.PI);
@@ -269,7 +275,6 @@ class Main {
                         
                         if (distance < 4 * this.ballRadius * this.ballRadius){
                             num_colisions++;
-                            console.log('ola');
 
                             var ball2Rotation = this.balls[k].getRotationY;
                             var ball2Speed = this.balls[k].getSpeed;
@@ -287,8 +292,9 @@ class Main {
                             this.balls[i].setSpeed(Math.sqrt(speedX * speedX + speedZ * speedZ));
                             this.balls[k].setSpeed(Math.sqrt(ball2SpeedX * ball2SpeedX + ball2SpeedZ * ball2SpeedZ));
                             
-                            var new_rotation = ball2Rotation;//Math.atan(speedX / speedZ) + Math.PI * (Math.cos(Math.atan(speedX / speedZ)) < 0 ? 1 : 0);
-                            var new_ball2Rotation = rotation;//Math.atan(ball2SpeedX / ball2SpeedZ) + Math.PI * (Math.cos(Math.atan(ball2SpeedX / ball2SpeedZ)) < 0 ? 1 : 0);
+                            var new_rotation = Math.atan2(speedX, speedZ);
+                            var new_ball2Rotation = Math.atan2(ball2SpeedX, ball2SpeedZ);
+                            
                             this.balls[i].rotateY(new_rotation);
                             this.balls[k].rotateY(new_ball2Rotation);
 
@@ -302,7 +308,7 @@ class Main {
                 positions[i] = this.balls[i].tryUpdate(t);
             }
             
-        }while(num_colisions>0);
+        }while(num_colisions > 0);
         
         for(var i = 0; i < this.numBalls; i++){
             this.balls[i].update(t);
