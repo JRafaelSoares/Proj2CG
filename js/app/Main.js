@@ -9,8 +9,8 @@ class Main {
 
         this.renderer.setSize(window.innerWidth, window.innerHeight);
 
-        this.defaultWidth = window.innerWidth;
-        this.defaultHeight = window.innerHeight;
+        this.defaultWidth = 200;
+        this.defaultHeight = 100;
 
         document.body.appendChild(this.renderer.domElement);
         
@@ -38,7 +38,7 @@ class Main {
 
         this.numBalls = 10;
 
-        this.diagonal = 500;
+        this.diagonal = 80;
 
         this.ballRadius = this.diagonal / 20;
 
@@ -95,20 +95,29 @@ class Main {
 
         this.cameraList = new Array(3);
         this.cameraNum = 0;
+
+        this.defaultAspectRatio = 0.5;
+        this.windowRatio = window.innerWidth / window.innerHeight;
+
+        /*  Scene Size: 200 * 100 * 200  */
         
         //Camera 1: Ortogonal Top View
-        this.cameraList[0] = new THREE.OrthographicCamera(window.innerWidth / -2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / -2, 1, 1000);
+        this.cameraList[0] = new THREE.OrthographicCamera(-this.defaultWidth / 2, -this.defaultWidth / 2, this.defaultHeight / 2, -this.defaultHeight / 2, 0.1, 600);
         
-        this.cameraList[0].position.y = 600;
+
+        this.cameraList[0].position.y = 200;
         this.cameraList[0].lookAt(0, 0, 0);
         
+
         //Camera 2: Perspective Camera, must see all the playing field;
-        
         this.cameraList[1] = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
         
+
         //Camera 3: Perspective Camera that moves with the ball
-        
         this.cameraList[2] = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
+
+
+        this.resizeEvent();
         
     }
 
@@ -135,52 +144,43 @@ class Main {
 
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         
-        var window_ratio = window.innerWidth / window.innerHeight;        
+        this.windowRatio = window.innerWidth / window.innerHeight;
+
+        console.log("Ola");
         
         if (window.innerHeight > 0 && window.innerWidth > 0) {
 
             
-            if(window.innerWidth < window.innerHeight){
-                this.scene.scale.set(window.innerWidth / this.defaultWidth, window.innerWidth / this.defaultWidth, window.innerWidth / this.defaultWidth);
-
-                //Perspective camera 2
-                this.cameraList[1].aspect = window_ratio;
-
-                //Perspective camera 3
-                this.cameraList[2].aspect = window_ratio;
-
-            }
-            else {
-                this.scene.scale.set(window.innerHeight / this.defaultHeight, window.innerHeight / this.defaultHeight, window.innerHeight / this.defaultHeight);
-            
-                //Perspective camera 2
-                this.cameraList[1].aspect = window_ratio;
-
-                //Perspective camera 3
-                this.cameraList[2].aspect = window_ratio;
-
-            }
-            
-
-            if(window.innerWidth > this.defaultWidth){
+            if(this.defaultAspectRatio < this.windowRatio){
                 //this.scene.scale.set(window.innerWidth / this.defaultWidth, window.innerWidth / this.defaultWidth, window.innerWidth / this.defaultWidth);
 
-                //Ortogonal camera 1
-                this.cameraList[0].left = (window.innerWidth / -2); //* (this.defaultWidth / this.defaultHeight);
-                this.cameraList[0].right = (window.innerWidth / 2); //* (this.defaultWidth / this.defaultHeight);
+                /*//Perspective camera 2
+                this.cameraList[1].aspect = window_ratio;
 
-                this.cameraList[0].top = window.innerHeight / 2;
-                this.cameraList[0].bottom = window.innerHeight / -2;
+                //Perspective camera 3
+                this.cameraList[2].aspect = window_ratio;*/
+
+                //Ortogonal camera 1
+
+                this.cameraList[0].top = (this.defaultWidth * (1 / this.windowRatio)) / 2;
+                this.cameraList[0].bottom = -(this.defaultWidth * (1 / this.windowRatio)) / 2;
+
             }
             else {
                 //this.scene.scale.set(window.innerHeight / this.defaultHeight, window.innerHeight / this.defaultHeight, window.innerHeight / this.defaultHeight);
-                //Ortogonal camera 1
-                this.cameraList[0].left = window.innerWidth / -2;
-                this.cameraList[0].right = window.innerWidth / 2;
+            
+                /*//Perspective camera 2
+                this.cameraList[1].aspect = window_ratio;
 
-                this.cameraList[0].top = (window.innerHeight / 2); //* (this.defaultHeight / this.defaultWidth);
-                this.cameraList[0].bottom = (window.innerHeight / -2); //* (this.defaultHeight / this.defaultWidth);
+                //Perspective camera 3
+                this.cameraList[2].aspect = window_ratio;*/
+
+                //Ortogonal camera 1
+                this.cameraList[0].left = -(this.defaultHeight * this.windowRatio) / 2; //* (this.defaultWidth / this.defaultHeight);
+                this.cameraList[0].right = (this.defaultHeight * this.windowRatio) / 2; //* (this.defaultWidth / this.defaultHeight);
+
             }
+            
 
             //Updates all cameras
             for(var i = 0; i<3; i++){
