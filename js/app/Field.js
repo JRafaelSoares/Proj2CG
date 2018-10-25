@@ -70,4 +70,8 @@ class Field extends GraphicalEntity {
     get getWidth(){
     	return this.baseWidth;
     }
+
+    selfUpdate(){
+        
+    }
 }

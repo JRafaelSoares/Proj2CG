@@ -25,6 +25,8 @@ class Main {
         this.clock = new THREE.Clock();
 
         this.timer = 0;
+
+        this.speedIncreaseInterval = 60;
         
         this.animate();
 
@@ -45,7 +47,6 @@ class Main {
         this.diagonal = 1000;
 
         this.ballRadius = this.diagonal / 20;
-
 
         this.baseMaterial = new THREE.MeshBasicMaterial({color: 0x009933, wireframe: false});
         this.wallMaterial = new THREE.MeshBasicMaterial({color: 0x734d26, wireframe: false});
@@ -104,20 +105,14 @@ class Main {
 
         this.far = 2000;
 
-        /*  Scene Size: 200 * 100 * 200  */
-
         //Camera 1: Ortogonal Top View
         this.cameraList[0] = new THREE.OrthographicCamera(-this.defaultWidth / 2, this.defaultWidth / 2, this.defaultHeight / 2, -this.defaultHeight / 2, 0.1, 1000);
         
-        
-
         this.cameraList[0].position.y = 800;
         this.cameraList[0].lookAt(0, 0, 0);
-        
 
         //Camera 2: Perspective Camera, must see all the playing field;
         this.cameraList[1] = new THREE.PerspectiveCamera(90, this.windowRatio, 0.1, this.far); //2 * Math.atan2(this.defaultHeight, 2 * this.far) * (180 / Math.PI)
-
 
         //Camera 3: Perspective Camera that moves with the ball
         this.cameraList[2] = new THREE.PerspectiveCamera(90, this.windowRatio, 0.1, this.far);
@@ -159,18 +154,7 @@ class Main {
                 //Ortogonal camera 1
                 this.cameraList[0].top = (this.defaultWidth * (1 / this.windowRatio)) / 2;
                 this.cameraList[0].bottom = -(this.defaultWidth * (1 / this.windowRatio)) / 2;
-
-
-                /*var oldHeight1 = Math.tan((this.cameraList[1].fov / 2) * (Math.PI / 180)) * 2 * this.far;
-                var oldHeight2 = Math.tan((this.cameraList[2].fov / 2) * (Math.PI / 180)) * 2 * this.far;
-
-
-                //Perspective camera 2
-                this.cameraList[1].fov = 2 * Math.atan2(oldHeight1 * this.windowRatio, 2 * this.far * this.cameraList[1].aspect) * (180 / Math.PI);
-
-                //Perspective camera 3
-                this.cameraList[2].fov = 2 * Math.atan2(oldHeight2 * this.windowRatio, 2 * this.far * this.cameraList[2].aspect) * (180 / Math.PI);*/
-
+            
             }
             else {
 
@@ -212,12 +196,6 @@ class Main {
                 //Show/Hide balls axis
                 this.toggleAxisHelpers();
                 break;
-            /*
-            Not needed anymore, but can be added
-            case 97: //a
-                this.toggleWireframe();
-                break;
-            */
         }
     }
 
@@ -235,7 +213,7 @@ class Main {
 
         this.timer += t;
         
-        /* Ball Speed */
+        /* Ball Positions */
         var positions = new Array(this.numBalls);
         
         /* Field measurements */
@@ -320,7 +298,7 @@ class Main {
         for(var i = 0; i < this.numBalls; i++){
             this.balls[i].update(t);
             
-            if(this.timer > 10){
+            if(this.timer > this.speedIncreaseInterval){
                 this.balls[i].incrementSpeed(20);
             }
             
