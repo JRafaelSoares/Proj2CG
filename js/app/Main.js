@@ -235,12 +235,14 @@ class Main {
 
         this.timer += t;
         
-        //Ball Speed
+        /* Ball Speed */
         var positions = new Array(this.numBalls);
         
+        /* Field measurements */
         var field_height = this.field.getHeight;
         var field_width = this.field.getWidth;
         
+        /* Get positions of balls for the next frame */
         for(var i = 0; i < this.numBalls; i++){
             positions[i] = this.balls[i].tryUpdate(t); 
         }
@@ -251,24 +253,19 @@ class Main {
             for(var i = 0; i < this.numBalls; i++){
                 var rotation = this.balls[i].getRotationY;
 
+                /* Collision with left and right walls */
                 if(positions[i][0] + this.ballRadius >= field_width / 2 || positions[i][0] - this.ballRadius <= -field_width / 2){
                     num_colisions++;
-                    
                     this.balls[i].rotateY(2 * Math.PI - rotation);
-                    //this.balls[i].rotateY(rotation - 2*(0.5*Math.PI - (2 * Math.PI - rotation)));
-                    //console.log(rotation - 2*(0.5*Math.PI - (2 * Math.PI - rotation)));
-                    //this.balls[i].addRotationY(-2*(0.5*Math.PI - (2 * Math.PI - rotation)) + 2*Math.PI);
                 }
                 
-                
+                /* Collision with top and bottom walls */
                 else if(positions[i][1] + this.ballRadius >= field_height / 2 || positions[i][1] - this.ballRadius <= -field_height / 2){
                     num_colisions++;
                     
                     this.balls[i].rotateY(Math.PI - rotation);
-                    //this.balls[i].rotateY(rotation + 2*(rotation - Math.PI) + 2*Math.PI)
-                    //this.balls[i].addRotationY(2*(rotation - Math.PI) + 2*Math.PI);
                 }
-                
+                /* Collision with other balls */
                 else{
                     var speed = this.balls[i].getSpeed;
                     var speedX = speed * Math.sin(rotation);
@@ -277,6 +274,7 @@ class Main {
                     for(var k = i+1; k < this.numBalls; k++){
                         var distance = (positions[i][0] - positions[k][0]) * (positions[i][0] - positions[k][0]) + (positions[i][1] - positions[k][1]) * (positions[i][1] - positions[k][1])
                         
+                        /* If there is a collision */
                         if (distance < 4 * this.ballRadius * this.ballRadius){
                             num_colisions++;
 
@@ -285,6 +283,7 @@ class Main {
                             var ball2SpeedX = ball2Speed * Math.sin(ball2Rotation);
                             var ball2SpeedZ = ball2Speed * Math.cos(ball2Rotation);
                             
+                            /* Speed formula */
                             var aux = ((speedX - ball2SpeedX) * (positions[i][0] - positions[k][0]) + (speedZ - ball2SpeedZ) * (positions[i][1] - positions[k][1])) / (4 * this.ballRadius * this.ballRadius);
 
                             speedX -= aux * (positions[i][0] - positions[k][0]);
@@ -293,27 +292,31 @@ class Main {
                             ball2SpeedX -= aux * (positions[k][0] - positions[i][0]);
                             ball2SpeedZ -= aux * (positions[k][1] - positions[i][1]);
 
+                            /* Setting new speed */
                             this.balls[i].setSpeed(Math.sqrt(speedX * speedX + speedZ * speedZ));
                             this.balls[k].setSpeed(Math.sqrt(ball2SpeedX * ball2SpeedX + ball2SpeedZ * ball2SpeedZ));
                             
+                            /* Setting new rotation */
                             var new_rotation = Math.atan2(speedX, speedZ);
                             var new_ball2Rotation = Math.atan2(ball2SpeedX, ball2SpeedZ);
                             
                             this.balls[i].rotateY(new_rotation);
                             this.balls[k].rotateY(new_ball2Rotation);
 
+                            /* Get new positions */
                             positions[k] = this.balls[k].tryUpdate(t);
                             break;
                         }
                     }
                 }
                 
-                
+                /* Check new positions */
                 positions[i] = this.balls[i].tryUpdate(t);
             }
             
         }while(num_colisions > 0);
         
+        /* Updating balls with valid positions and Update timer */
         for(var i = 0; i < this.numBalls; i++){
             this.balls[i].update(t);
             
@@ -322,7 +325,8 @@ class Main {
             }
             
         }
-        
+
+        /* Restart timer */
         if(this.timer > 10){
             this.timer = 0;
         }

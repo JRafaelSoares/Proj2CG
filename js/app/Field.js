@@ -5,6 +5,7 @@ class Field extends GraphicalEntity {
 
         this.baseMaterial = materials[0];
 
+        /* If walls have a diferent material than the base */
         if(materials.length == 1) {
         	this.wallMaterial = materials[0];
         }
@@ -18,6 +19,7 @@ class Field extends GraphicalEntity {
         this.baseHeight = 2 * diagonal / Math.sqrt(5);
         this.baseWidth = this.baseHeight / 2;
         
+        /* If there is a camera associated with this field */
         if(camera != null){
             this.camera = camera;
             this.add(this.camera);
@@ -27,13 +29,15 @@ class Field extends GraphicalEntity {
         }
 
         var geometry = new THREE.CubeGeometry(this.baseWidth, 10, this.baseHeight);
+        
+        /* Create Base */
         this.walls[0] = new THREE.Mesh(geometry, this.baseMaterial);
 
         this.add(this.walls[0]);
 
         this.walls[0].position.set(0, -5, 0);
         
-        //Left Right
+        /* Create Left and Right walls */
         for(var i = 1; i < 3; i++){
             geometry = new THREE.CubeGeometry(10, diagonal / 10, this.baseHeight);
             this.walls[i] = new THREE.Mesh(geometry, this.wallMaterial);
@@ -43,7 +47,7 @@ class Field extends GraphicalEntity {
             this.add(this.walls[i]);
         }
 
-        //Near Far
+        /* Create Near and Far walls */
         for(var i = 3; i < 5; i++){
             geometry = new THREE.CubeGeometry(this.baseWidth + 20, diagonal / 10, 10);
             this.walls[i] = new THREE.Mesh(geometry, this.wallMaterial);
